@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Edufun Hub - Gradient Text Animation</title>
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* Basic Setup */
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: #0f0f1e;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Poppins', sans-serif;
+      overflow: visible;
+    }
+
+    .container {
+      text-align: center;
+      perspective: 1000px;
+      padding: 40px;
+    }
+
+    /* Animated Gradient Text */
+    .animated-text {
+      font-size: 4.5rem;
+      font-weight: 700;
+      background: linear-gradient(270deg, #ff0057, #fffd82, #00e0ff, #ff0057);
+      background-size: 800% 800%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: gradientShift 15s ease infinite, floatPulse 4s ease-in-out infinite alternate;
+      transform-style: preserve-3d;
+      backface-visibility: visible;
+      filter: drop-shadow(0 0 12px #ff0057);
+      padding: 0 20px;
+    }
+
+    .sub-text {
+      margin-top: 20px;
+      color: #ccc;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      font-size: 1.1rem;
+      animation: fadeInUp 2s ease forwards;
+      transform: translateY(20px);
+    }
+
+    /* Subscribe Button */
+    .subscribe-btn {
+      margin-top: 30px;
+      padding: 12px 28px;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #fff;
+      background: linear-gradient(135deg, #ff0057, #ff7f50);
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 0 10px #ff0057, 0 0 20px #ff7f50;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .subscribe-btn:hover {
+      transform: scale(1.08);
+      box-shadow: 0 0 15px #ff0057, 0 0 30px #ff7f50;
+    }
+
+    /* Animations */
+    @keyframes floatPulse {
+      0% {
+        transform: translateZ(0) scale(1);
+        filter: drop-shadow(0 0 5px #ff0057);
+      }
+      50% {
+        transform: translateZ(20px) scale(1.05);
+        filter: drop-shadow(0 0 20px #00e0ff);
+      }
+      100% {
+        transform: translateZ(0) scale(1);
+        filter: drop-shadow(0 0 5px #ff0057);
+      }
+    }
+
+    @keyframes gradientShift {
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="animated-text">Edufun Hub</h1>
+    <p class="sub-text">Subscribe for more!</p>
+
+    <!-- ✅ Subscribe Button -->
+    <a
+      href="https://www.youtube.com/@mdjuealhossain-m9f?sub_confirmation=1"
+      target="_blank"
+      class="subscribe-btn"
+    >
+      🎯 Subscribe Now
+    </a>
+  </div>
+</body>
+</html>

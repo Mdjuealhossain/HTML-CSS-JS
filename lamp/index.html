@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>3D Wooden Analog Clock with Realistic Frame</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #001f4d, #003366);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .clock {
+      position: relative;
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+
+      /* Outer wooden frame */
+      background:
+        radial-gradient(circle at center, #b28a5e 45%, #60431b 80%), /* wood core */
+        repeating-linear-gradient(
+          45deg,
+          #9c6c3a,
+          #9c6c3a 4px,
+          #7b4f20 4px,
+          #7b4f20 8px
+        ); /* wood grain */
+
+      /* 3D bevel effect on frame */
+      box-shadow:
+        inset 8px 8px 15px rgba(255, 255, 255, 0.4),  /* top-left highlight */
+        inset -8px -8px 15px rgba(0, 0, 0, 0.6),    /* bottom-right shadow */
+        0 10px 25px rgba(0, 0, 0, 0.8);             /* outer shadow */
+
+      filter: drop-shadow(0 12px 20px rgba(0, 0, 0, 0.7));
+    }
+
+    /* Inner clock face container */
+    .clock-face {
+      position: absolute;
+      top: 16px;  /* leave space for frame */
+      left: 16px;
+      right: 16px;
+      bottom: 16px;
+      border-radius: 50%;
+      background:
+        repeating-linear-gradient(
+          45deg,
+          #a9746e,
+          #a9746e 5px,
+          #855e53 5px,
+          #855e53 10px
+        ),
+        radial-gradient(circle at center, #b7866b, #5c3a2e);
+      box-shadow:
+        inset 3px 3px 8px rgba(255, 255, 255, 0.3),
+        inset -4px -4px 15px rgba(0, 0, 0, 0.7);
+      z-index: 2;
+    }
+
+    .center-dot {
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      background: radial-gradient(circle, #3e1f0d, #000);
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      box-shadow:
+        0 0 6px rgba(0,0,0,0.9),
+        inset 0 2px 3px rgba(255,255,255,0.15);
+      z-index: 10;
+    }
+
+    .hand {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform-origin: bottom;
+      border-radius: 4px;
+      transition: transform 0.1s cubic-bezier(0.4, 2.3, 0.3, 1);
+      box-shadow:
+        0 1px 4px rgba(0,0,0,0.6),
+        inset 0 0 3px rgba(255,255,255,0.3);
+    }
+
+    .hour-hand {
+      width: 10px;
+      height: 85px;
+      z-index: 3;
+      background: linear-gradient(to top, #4b2e0a, #a97348);
+      box-shadow:
+        0 5px 8px rgba(0,0,0,0.7),
+        inset 0 0 8px rgba(255,255,255,0.5);
+    }
+
+    .minute-hand {
+      width: 7px;
+      height: 120px;
+      z-index: 2;
+      background: linear-gradient(to top, #5c3a17, #b78a42);
+      box-shadow:
+        0 4px 6px rgba(0,0,0,0.6),
+        inset 0 0 6px rgba(255,255,255,0.4);
+    }
+
+    .second-hand {
+      width: 4px;
+      height: 135px;
+      background: linear-gradient(to top, #d94e28, #a02c12);
+      z-index: 1;
+      box-shadow: 0 0 10px rgba(217, 78, 40, 0.9);
+      border-radius: 2px;
+    }
+
+    .number {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform-origin: center;
+      user-select: none;
+      font-weight: 900;
+      color: #3b1f0f;
+      text-shadow:
+        1px 1px 1px #deb887,
+        0 0 3px rgba(0,0,0,0.4);
+      font-family: 'Arial Black', Arial, sans-serif;
+      z-index: 5;
+    }
+
+    /* Only 12,3,6,9 numbers with position & big size */
+    .number[data-num="12"] {
+      font-size: 36px;
+      transform: translate(-50%, -50%) translateY(-125px);
+    }
+    .number[data-num="3"] {
+      font-size: 36px;
+      transform: translate(-50%, -50%) translateX(125px);
+    }
+    .number[data-num="6"] {
+      font-size: 36px;
+      transform: translate(-50%, -50%) translateY(125px);
+    }
+    .number[data-num="9"] {
+      font-size: 36px;
+      transform: translate(-50%, -50%) translateX(-125px);
+    }
+  </style>
+</head>
+<body>
+  <div class="clock">
+    <div class="clock-face">
+      <div class="center-dot"></div>
+      <div class="hand hour-hand" id="hour"></div>
+      <div class="hand minute-hand" id="minute"></div>
+      <div class="hand second-hand" id="second"></div>
+
+      <!-- Show only 12, 3, 6, 9 with text -->
+      <div class="number" data-num="12">12</div>
+      <div class="number" data-num="3">3</div>
+      <div class="number" data-num="6">6</div>
+      <div class="number" data-num="9">9</div>
+    </div>
+  </div>
+
+  <script>
+    const hourHand = document.getElementById('hour');
+    const minuteHand = document.getElementById('minute');
+    const secondHand = document.getElementById('second');
+
+    function updateClock() {
+      const now = new Date();
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+      const seconds = now.getSeconds();
+
+      const hourDeg = (hours % 12) * 30 + minutes * 0.5;
+      const minuteDeg = minutes * 6 + seconds * 0.1;
+      const secondDeg = seconds * 6;
+
+      hourHand.style.transform = `translate(-50%, -100%) rotate(${hourDeg}deg)`;
+      minuteHand.style.transform = `translate(-50%, -100%) rotate(${minuteDeg}deg)`;
+      secondHand.style.transform = `translate(-50%, -100%) rotate(${secondDeg}deg)`;
+    }
+
+    setInterval(updateClock, 1000);
+    updateClock();
+  </script>
+</body>
+</html>

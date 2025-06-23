@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Rotated Image Animation with Trail</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        height: 100%;
+      }
+
+      body {
+        font-family: sans-serif;
+        background: #0d1b2a; /* ✅ Dark Blue */
+        color: white;
+      }
+
+      .main-section {
+        width: 100%;
+        height: 100vh;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+
+      h1 {
+        font-size: 54px;
+        margin-bottom: 170px;
+        font-weight: 900;
+        background: linear-gradient(
+          -45deg,
+          #ff6ec4,
+          #7873f5,
+          #42e695,
+          #ffe985,
+          #fb7ba2
+        );
+        background-size: 400% 400%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: gradientMove 6s ease infinite;
+        text-align: center;
+      }
+
+      @keyframes gradientMove {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      #box {
+        width: 100px;
+        height: auto;
+        position: absolute;
+        top: 33.5%;
+        left: 0;
+        z-index: 10;
+        transition: left 0.1s linear;
+        user-select: none;
+        transform: rotate(90deg); /* ✅ Corrected to 45deg */
+      }
+
+      .trail {
+        position: absolute;
+        top: 40%;
+        left: 0;
+        height: 50px;
+        background-color: rgba(255, 255, 255, 0.2);
+        pointer-events: none;
+        z-index: 5;
+        width: 0;
+        transition: none;
+      }
+
+      .controls {
+        position: absolute;
+        bottom: 300px;
+        left: 0;
+        right: 0;
+        display: flex;
+        justify-content: center;
+        padding: 0 50px;
+        z-index: 20;
+        gap: 20px;
+      }
+
+      button {
+        padding: 12px 28px;
+        font-size: 16px;
+        font-weight: bold;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        color: white;
+        transition: transform 0.2s;
+      }
+
+      button:hover {
+        transform: scale(1.05);
+      }
+
+      #startBtn {
+        background: linear-gradient(135deg, #005f3f, #00b368); /* ✅ Deep Green Gradient */
+      }
+
+      #stopBtn {
+        background: linear-gradient(135deg, #c31432, #240b36); /* ✅ Red Gradient */
+      }
+
+      #backBtn {
+        background: linear-gradient(135deg, #232526, #414345); /* ✅ Black Gradient */
+      }
+    </style>
+  </head>
+  <body>
+    <section class="main-section">
+      <div class="trail" id="trail"></div>
+      <img
+        src="https://static1.squarespace.com/static/6844ee8936c06822eead919b/t/68590ce43470ee59d766f402/1750666468299/pngwing.com+%2812%29.png"
+        alt="Car"
+        id="box"
+        draggable="false"
+      />
+      <h1>Interactive Car Animation</h1>
+
+      <div class="controls">
+        <button id="startBtn">Start</button>
+        <button id="stopBtn">Stop</button>
+        <button id="backBtn">Back</button>
+      </div>
+    </section>
+
+    <script>
+      const box = document.getElementById("box");
+      const trail = document.getElementById("trail");
+      const startBtn = document.getElementById("startBtn");
+      const backBtn = document.getElementById("backBtn");
+      const stopBtn = document.getElementById("stopBtn");
+
+      const boxWidth = 100; // Width of the image
+      const buffer = 50; // Stop 50px before right edge
+
+      let animation;
+      let pos = 0;
+      let isRunning = false;
+
+      function moveBox(forward = true) {
+        cancelAnimationFrame(animation);
+        isRunning = true;
+
+        const maxRight = window.innerWidth - boxWidth - buffer;
+
+        function animate() {
+          if (!isRunning) return;
+
+          if (forward) {
+            if (pos < maxRight) {
+              pos += 5;
+              box.style.left = pos + "px";
+              trail.style.left = "0";
+              trail.style.width = pos + "px";
+              animation = requestAnimationFrame(animate);
+            } else {
+              isRunning = false;
+            }
+          } else {
+            if (pos > 0) {
+              pos -= 5;
+              box.style.left = pos + "px";
+              trail.style.left = "0";
+              trail.style.width = pos + boxWidth + "px";
+              animation = requestAnimationFrame(animate);
+            } else {
+              isRunning = false;
+              trail.style.width = "0px";
+            }
+          }
+        }
+
+        animate();
+      }
+
+      startBtn.onclick = () => moveBox(true);
+      backBtn.onclick = () => moveBox(false);
+      stopBtn.onclick = () => {
+        isRunning = false;
+        cancelAnimationFrame(animation);
+      };
+    </script>
+  </body>
+</html>

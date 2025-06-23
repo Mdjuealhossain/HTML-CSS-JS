@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Improved Cinematic Storm</title>
+  <style>
+    body, html {
+      margin:0; padding:0; overflow: hidden;
+      height: 100vh; width: 100vw;
+      background: linear-gradient(to bottom, #0b1227 0%, #1f2949 70%, #182030 100%);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      position: relative;
+    }
+
+    #clouds {
+      position: absolute;
+      top: 20vh; left: 0;
+      width: 300vw; height: 150px;
+      pointer-events: none;
+      filter: drop-shadow(0 0 6px rgba(255 255 255 / 0.1));
+      animation: cloudMove 40s linear infinite; /* ২ গুণ দ্রুত */
+    }
+
+    .cloud {
+      position: absolute;
+      background: radial-gradient(ellipse at center, rgba(255 255 255 / 0.18) 20%, transparent 80%);
+      border-radius: 60px / 40px;
+      filter: blur(8px);
+    }
+    .cloud:before, .cloud:after {
+      content: '';
+      position: absolute;
+      background: inherit;
+      border-radius: 50%;
+    }
+    .cloud:before {
+      width: 120px; height: 120px;
+      top: -60px; left: 20px;
+    }
+    .cloud:after {
+      width: 100px; height: 100px;
+      top: -30px; left: 70px;
+    }
+
+    .cloud.small { width: 150px; height: 80px; top: 10px; }
+    .cloud.medium { width: 200px; height: 110px; top: 40px; }
+    .cloud.large { width: 270px; height: 140px; top: 30px; }
+
+    #lightning {
+      pointer-events: none;
+      position: absolute;
+      inset: 0;
+      background: white;
+      opacity: 0;
+      z-index: 10;
+      mix-blend-mode: screen;
+    }
+    .flash {
+      animation: flashAnim 0.12s ease-out;
+    }
+    @keyframes flashAnim {
+      0% { opacity: 0.9; }
+      100% { opacity: 0; }
+    }
+
+    /* Rain full screen */
+    .raindrop {
+      position: fixed;
+      bottom: 100vh;
+      width: 2px;
+      height: 14px;
+      background: rgba(200 220 255 / 0.6);
+      border-radius: 50%;
+      animation: rainFall linear forwards;
+      opacity: 0.6;
+      pointer-events: none;
+      z-index: 5;
+    }
+    @keyframes rainFall {
+      to {
+        transform: translateY(110vh);
+        opacity: 0;
+      }
+    }
+
+    .money {
+      position: fixed;
+      top: -40px;
+      font-size: 30px;
+      animation: moneyFall linear forwards;
+      pointer-events: none;
+      user-select: none;
+      z-index: 6;
+    }
+    @keyframes moneyFall {
+      0% { opacity: 1; transform: translateY(0) rotate(0deg); }
+      100% { opacity: 0; transform: translateY(110vh) rotate(360deg); }
+    }
+
+    @keyframes cloudMove {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-66.6666vw); }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="clouds">
+    <div class="cloud small" style="left: 10vw;"></div>
+    <div class="cloud medium" style="left: 70vw; top: 50px;"></div>
+    <div class="cloud large" style="left: 140vw; top: 40px;"></div>
+    <div class="cloud medium" style="left: 210vw; top: 45px;"></div>
+  </div>
+
+  <div id="lightning"></div>
+
+  <script>
+    const clouds = document.getElementById('clouds');
+    const lightning = document.getElementById('lightning');
+
+    function spawnRain() {
+      const drop = document.createElement('div');
+      drop.classList.add('raindrop');
+      drop.style.left = Math.random() * 100 + 'vw';
+      // Randomize drop size and speed for realism
+      const size = 1 + Math.random() * 2;
+      drop.style.width = size + 'px';
+      drop.style.height = 8 + size * 6 + 'px';
+      drop.style.animationDuration = (0.3 + Math.random() * 0.8) + 's';
+      clouds.appendChild(drop);
+
+      setTimeout(() => drop.remove(), 1500);
+    }
+    setInterval(spawnRain, 10);
+
+    function spawnMoney() {
+      const money = document.createElement('div');
+      money.classList.add('money');
+      money.textContent = '💸';
+      money.style.left = Math.random() * 100 + 'vw';
+      money.style.animationDuration = (3 + Math.random() * 3) + 's';
+      clouds.appendChild(money);
+
+      setTimeout(() => money.remove(), 6000);
+    }
+    setInterval(spawnMoney, 350);
+
+    function lightningStrike() {
+      lightning.classList.add('flash');
+      setTimeout(() => {
+        lightning.classList.remove('flash');
+      }, 120);
+    }
+
+    // Increase lightning frequency and add random small flashes
+    setInterval(() => {
+      if (Math.random() > 0.55) {
+        lightningStrike();
+      }
+      else if(Math.random() > 0.8){
+        // small random flicker
+        lightning.style.opacity = 0.3 + Math.random() * 0.4;
+        setTimeout(() => { lightning.style.opacity = 0; }, 80);
+      }
+    }, 1500 + Math.random() * 1500);
+
+  </script>
+
+</body>
+</html>

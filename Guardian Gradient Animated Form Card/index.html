@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Guardian Gradient Form with Animated Title</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: #0f172a;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: white;
+      overflow: hidden;
+    }
+
+    /* Animated Gradient Text */
+    .form-title-main {
+      font-size: 3.2rem;
+      font-weight: 700;
+      text-align: center;
+      margin: 0 0 72px 0; /* নিচে 25px স্পেস */
+      background: linear-gradient(270deg, #2f80ed, #56ccf2, #6ee7b7, #fbbf24, #2f80ed);
+      background-size: 400% 400%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: gradientShift 10s ease infinite;
+      user-select: none;
+      letter-spacing: 1.2px;
+  
+    }
+
+    @keyframes gradientShift {
+      0% {background-position: 0% 50%;}
+      50% {background-position: 100% 50%;}
+      100% {background-position: 0% 50%;}
+    }
+
+    .gradient-border-wrapper {
+      padding: 30px;
+      border-radius: 24px;
+      background: linear-gradient(270deg, #2f80ed, #56ccf2, #6ee7b7, #fbbf24, #2f80ed);
+      background-size: 400% 400%;
+      animation: spinBorder 10s linear infinite;
+      box-shadow: 0 12px 45px rgba(0, 0, 0, 0.5);
+      z-index: 10;
+      position: relative;
+      transition: transform 0.5s ease-in-out;
+      width: 450px;
+    }
+
+    @keyframes spinBorder {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 400% 50%; }
+    }
+
+    .form-card {
+      background: #1e293b;
+      border-radius: 12px;
+      padding: 2rem 2.5rem;
+      color: #f1f5f9;
+      position: relative;
+      z-index: 1;
+      box-shadow: inset 0 0 12px rgba(255, 255, 255, 0.05);
+      transform: scale(0.96);
+      transition: transform 0.1s ease-in-out;
+    }
+
+    .form-title {
+      text-align: center;
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin: 0;
+      color: #f8fafc;
+    }
+
+    .form-fields {
+      max-height: 0;
+      overflow: hidden;
+      pointer-events: none;
+      transition: all 0.5s ease;
+    }
+
+    .gradient-border-wrapper:hover .form-fields {
+      max-height: 1000px;
+      pointer-events: auto;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      margin-top: 2rem;
+    }
+
+    label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #e2e8f0;
+      margin-bottom: 6px;
+      display: inline-block;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 0.6rem 0.75rem;
+      border-radius: 8px;
+      border: 2px solid #334155;
+      background-color: #0f172a;
+      color: #f8fafc;
+      font-size: 1rem;
+      transition: border-color 0.3s ease;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #56ccf2;
+      background-color: #1e293b;
+    }
+
+    .submit-btn {
+      background-color: #2563eb;
+      color: white;
+      font-weight: 600;
+      padding: 0.75rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.3s ease;
+    }
+
+    .submit-btn:hover {
+      background-color: #1d4ed8;
+      transform: scale(1.03);
+    }
+  </style>
+</head>
+<body>
+
+  <h1 class="form-title-main">Gradient border with animation.</h1>
+
+  <div class="gradient-border-wrapper">
+    <div class="form-card">
+      <h2 class="form-title">Sign In</h2>
+
+      <div class="form-fields">
+        <form novalidate>
+          <div>
+            <label for="name">Full Name</label>
+            <input type="text" id="name" name="name" />
+          </div>
+          <div>
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" />
+          </div>
+          <div>
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" />
+          </div>
+          <button type="button" class="submit-btn">Submit</button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+</html>

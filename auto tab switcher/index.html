@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smooth Auto Tab</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: white;
+      color: #1f2937;
+      font-family: sans-serif;
+    }
+
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4rem;
+      max-width: 1200px;
+      margin: auto;
+      padding: 2rem;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .tabs {
+      flex: 1 1 400px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .tab {
+      cursor: pointer;
+      margin-bottom: 1.5rem;
+      transition: all 0.3s ease-in-out;
+    }
+
+    .tab h2 {
+      font-size: 24px;
+      font-weight: bold;
+      margin: 0;
+      color: #1f2937;
+      transition: color 0.3s ease-in-out;
+    }
+
+    .tab p {
+      font-size: 0.875rem;
+      margin-top: 1rem;
+      margin-bottom: 1rem;
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      transition: max-height 0.6s ease, opacity 0.4s ease;
+    }
+
+    .tab.active h2 {
+      color: #1c55fb;
+    }
+
+    .tab.active p {
+      max-height: 300px;
+      opacity: 1;
+    }
+
+    .progress-bar {
+      height: 2px;
+      background-color: #ecf0fe;
+      width: 100%;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background-color: #1c55fb;
+      width: 0%;
+      transition: width 0.3s linear;
+    }
+
+    .content {
+      flex: 1 1 500px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      height: 500px;
+    }
+
+    .tab-image {
+      width: auto;
+      max-width: 100%;
+      height: auto;
+      max-height: 100%;
+      border-radius: 10px;
+      opacity: 0;
+      transition: opacity 0.8s ease-in-out;
+    }
+
+    .tab-image.visible {
+      opacity: 1;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+        gap: 2rem;
+      }
+
+      .tab h2 {
+        font-size: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="container">
+      <!-- Tabs -->
+      <aside class="tabs">
+        <div class="tab active" data-tab="0">
+          <h2>Retail media</h2>
+          <p>Retail media visual goes here...</p>
+          <div class="progress-bar"><div class="progress-fill"></div></div>
+        </div>
+        <div class="tab" data-tab="1">
+          <h2>Retail operations</h2>
+          <p>Retail operations visual goes here...</p>
+          <div class="progress-bar"><div class="progress-fill"></div></div>
+        </div>
+        <div class="tab" data-tab="2">
+          <h2>Market intelligence</h2>
+          <p>Market intelligence visual goes here...</p>
+          <div class="progress-bar"><div class="progress-fill"></div></div>
+        </div>
+      </aside>
+
+      <!-- Image Content -->
+      <div class="content">
+        <img
+          src="https://static1.squarespace.com/static/68364d401595ec0792f49b2e/t/684fa828bae2b9570dc0cc8c/1750050856446/t23.png"
+          alt="Tab Visual"
+          class="tab-image visible"
+          id="tabImage"
+        />
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const tabs = document.querySelectorAll(".tab");
+    const progressFills = document.querySelectorAll(".progress-fill");
+    const tabImage = document.getElementById("tabImage");
+
+    const tabContents = [
+      {
+        title: "Retail media",
+        description: "Retail media visual goes here...",
+        image: "https://static1.squarespace.com/static/68364d401595ec0792f49b2e/t/684fa828bae2b9570dc0cc8c/1750050856446/t23.png"
+      },
+      {
+        title: "Retail operations",
+        description: "Retail operations visual goes here...",
+        image: "https://static1.squarespace.com/static/68364d401595ec0792f49b2e/t/684fa7623c888a3a5f72c716/1750050658817/t1.png"
+      },
+      {
+        title: "Market intelligence",
+        description: "Market intelligence visual goes here...",
+        image: "https://static1.squarespace.com/static/68364d401595ec0792f49b2e/t/684fa762387b6c449557c17d/1750050658848/t3.png"
+      }
+    ];
+
+    let currentIndex = 0;
+    let interval;
+
+    function showTab(index) {
+      tabs.forEach((tab, i) => {
+        tab.classList.remove("active");
+        progressFills[i].style.width = "0%";
+      });
+
+      tabs[index].classList.add("active");
+
+      // Smooth image transition
+      tabImage.classList.remove("visible");
+      setTimeout(() => {
+        tabImage.src = tabContents[index].image;
+        tabImage.classList.add("visible");
+      }, 200);
+
+      let progress = 0;
+      clearInterval(interval);
+      interval = setInterval(() => {
+        progress += 1;
+        progressFills[index].style.width = `${progress}%`;
+        if (progress >= 100) {
+          clearInterval(interval);
+          currentIndex = (index + 1) % tabs.length;
+          showTab(currentIndex);
+        }
+      }, 50);
+    }
+
+    showTab(currentIndex);
+
+    tabs.forEach((tab, i) => {
+      tab.addEventListener("click", () => {
+        currentIndex = i;
+        showTab(i);
+      });
+    });
+  </script>
+</body>
+</html>

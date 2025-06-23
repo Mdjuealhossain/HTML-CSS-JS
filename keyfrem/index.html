@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Smooth Gradient Color Shift with Spark Blast</title>
+  <style>
+    body {
+      background: linear-gradient(145deg, #0f2027, #203a43, #2c5364);
+      min-height: 100vh;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: sans-serif;
+      padding: 40px 10px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .card-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      position: relative;
+      z-index: 1;
+      max-width: 1120px;
+    }
+
+    .card {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      animation: float 3s ease-in-out infinite;
+      transition: background 0.3s linear;
+      /* For better performance */
+      will-change: background;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50%      { transform: translateY(-80px); }
+    }
+
+    .particle {
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      pointer-events: none;
+      animation: explode 0.9s forwards;
+      z-index: 0;
+    }
+
+    @keyframes explode {
+      to {
+        transform: translate(var(--x), var(--y)) scale(0.3);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="card-container">
+    <!-- 20 floating dots -->
+    <div class="card"></div><div class="card"></div><div class="card"></div><div class="card"></div><div class="card"></div>
+    <div class="card"></div><div class="card"></div><div class="card"></div><div class="card"></div><div class="card"></div>
+    <div class="card"></div><div class="card"></div><div class="card"></div><div class="card"></div><div class="card"></div>
+    <div class="card"></div><div class="card"></div><div class="card"></div><div class="card"></div><div class="card"></div>
+  </div>
+
+<script>
+  // রঙের অ্যারে
+  const colors = [
+    '#ff4b1f', '#ff9068', '#ffd200', '#00f260', '#0575e6',
+    '#8e2de2', '#da22ff', '#fc466b', '#3f5efb', '#f7971e'
+  ];
+
+  const cards = document.querySelectorAll('.card');
+
+  // গ্রেডিয়েন্ট পেয়ার তৈরির ফাংশন
+  function createGradients(arr) {
+    const grads = [];
+    for (let i = 0; i < arr.length; i++) {
+      let nextIndex = (i + 1) % arr.length;
+      grads.push([arr[i], arr[nextIndex]]);
+    }
+    return grads;
+  }
+
+  let gradients = createGradients(colors);
+
+  // হেক্স কালার থেকে RGB কনভার্টার
+  function hexToRgb(hex) {
+    hex = hex.replace(/^#/, '');
+    return {
+      r: parseInt(hex.substring(0, 2), 16),
+      g: parseInt(hex.substring(2, 4), 16),
+      b: parseInt(hex.substring(4, 6), 16)
+    };
+  }
+
+  // দুইটি রঙের মধ্যে linear interpolation
+  function lerpColor(a, b, t) {
+    const c1 = hexToRgb(a);
+    const c2 = hexToRgb(b);
+    const r = Math.round(c1.r + (c2.r - c1.r) * t);
+    const g = Math.round(c1.g + (c2.g - c1.g) * t);
+    const b_ = Math.round(c1.b + (c2.b - c1.b) * t);
+    return `rgb(${r},${g},${b_})`;
+  }
+
+  // animation progress এবং speed
+  let progress = 0;
+  const speed = 0.055; // 0.005 = ধীরে ধীরে
+
+  // smooth gradient shift function (recursive with requestAnimationFrame)
+  function smoothShift() {
+    cards.forEach((card, idx) => {
+      const baseIndex = idx % gradients.length;
+
+      const currentIndex = Math.floor(progress + baseIndex) % gradients.length;
+      const nextIndex = (currentIndex + 1) % gradients.length;
+
+      // fractional progress between gradients
+      const t = (progress + baseIndex) % 1;
+
+      const [startCurrent, endCurrent] = gradients[currentIndex];
+      const [startNext, endNext] = gradients[nextIndex];
+
+      const startColor = lerpColor(startCurrent, startNext, t);
+      const endColor = lerpColor(endCurrent, endNext, t);
+
+      card.style.background = `linear-gradient(135deg, ${startColor}, ${endColor})`;
+      card.style.animationDelay = `${idx * 0.3}s`;
+    });
+
+    progress += speed;
+    if (progress >= gradients.length) progress = 0;
+
+    requestAnimationFrame(smoothShift);
+  }
+
+  smoothShift();
+
+  // Spark Blast Code (আগের মতো)
+
+  function getRandomColor() {
+    return colors[Math.floor(Math.random() * colors.length)];
+  }
+
+ 
+function blastAtRandomPosition() {
+  // 5 থেকে 12 এর মধ্যে র‍্যান্ডম সংখ্যা নেবে
+  const minBlasts = 5;
+  const maxBlasts = 12;
+  const numBlasts = Math.floor(Math.random() * (maxBlasts - minBlasts + 1)) + minBlasts;
+
+  for (let i = 0; i < numBlasts; i++) {
+    const x = Math.random() * window.innerWidth;
+    const y = Math.random() * window.innerHeight;
+    blast(x, y);
+  }
+}
+
+
+  function blast(x, y) {
+    const numParticles = 15 + Math.floor(Math.random() * 6);
+    for (let i = 0; i < numParticles; i++) {
+      const particle = document.createElement('div');
+      particle.classList.add('particle');
+
+      const angle = Math.random() * 2 * Math.PI;
+      const distance = Math.random() * 90 + 40;
+      const offsetX = Math.cos(angle) * distance;
+      const offsetY = Math.sin(angle) * distance;
+
+      particle.style.setProperty('--x', `${offsetX}px`);
+      particle.style.setProperty('--y', `${offsetY}px`);
+      particle.style.background = getRandomColor();
+      particle.style.left = `${x}px`;
+      particle.style.top = `${y}px`;
+
+      document.body.appendChild(particle);
+      setTimeout(() => particle.remove(), 1000);
+    }
+  }
+
+  setInterval(blastAtRandomPosition, 3500);
+</script>
+</body>
+</html>

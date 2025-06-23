@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Responsive Grid - No Gap</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #0a192f, #172554);
+      min-height: 100vh;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 2rem;
+      font-weight: 900;
+      background: linear-gradient(to left, #f97316, #a855f7, #f97316);
+      background-size: 200% 100%;
+      animation: gradientMove 4s linear infinite;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-align: center;
+    }
+
+    @keyframes gradientMove {
+      0% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 1rem;
+      grid-auto-flow: dense;
+      width: 100%;
+      max-width: 1080px;
+    }
+
+    .box {
+      height: 50px;
+      border-radius: 6px;
+      background: linear-gradient(135deg, #2563eb, #3b82f6, #60a5fa);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.5);
+      transition: 0.3s;
+    }
+
+    .box:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(59, 130, 246, 0.7);
+    }
+
+    /* Optional Span (only works when enough space available) */
+    .span-2 { grid-column: span 2; }
+    .span-4 { grid-column: span 4; }
+
+    /* Fallback for small screens */
+    @media (max-width: 500px) {
+      .span-2,
+      .span-4 {
+        grid-column: span 1 !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Responsive Grid UI</h1>
+
+  <div class="grid">
+    <!-- First row: 1 + 2 + 1 columns -->
+    <div class="box"></div>
+    <div class="box span-2"></div>
+    <div class="box"></div>
+
+    <!-- Second row: 2 boxes -->
+    <div class="box span-2"></div>
+    <div class="box span-2"></div>
+
+    <!-- Third row: full width -->
+    <div class="box span-4"></div>
+
+    <!-- Last row: 2 boxes -->
+    <div class="box span-2"></div>
+    <div class="box span-2"></div>
+    <div class="box span-2"></div>
+  </div>
+</body>
+</html>

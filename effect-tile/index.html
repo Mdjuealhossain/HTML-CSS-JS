@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Medical Services Cards</title>
+  <style>
+    body{
+         display: flex;
+    
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .card-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      padding: 40px 20px;
+      background-color: #f9f9f9;
+    }
+
+    .custom-card {
+      width: 350px;
+      min-height: 400px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #323734;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+      position: relative;
+      color: #f2f2f1;
+      text-decoration: none;
+      flex-direction: column;
+    }
+
+    .custom-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .card-front {
+      padding: 20px;
+      text-align: center;
+    }
+
+    .card-icon {
+      width: 123px;
+      height: 123px;
+      margin-bottom: 10px;
+    }
+
+    .card-title {
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .card-back {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #83816e;
+      color: #f2f2f1;
+      padding: 1rem;
+      transform: translateY(100%);
+      transition: transform 0.3s ease;
+      z-index: 1;
+      max-height: 250px;
+      overflow: auto;
+      display: block;
+      text-decoration: none;
+    }
+
+    .custom-card:hover .card-back {
+      transform: translateY(0%);
+    }
+
+    .card-back:hover {
+      text-decoration: underline;
+    }
+
+    .card-back::-webkit-scrollbar {
+      display: none;
+    }
+
+    @media (max-width: 960px) {
+      .custom-card {
+        width: 90%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card-container">
+    <div class="custom-card">
+      <div class="card-front">
+        <img class="card-icon" src="https://static1.squarespace.com/static/5ac4276d297114a27fcc3a23/t/68382a803b955e05f48f7ec3/1748511360798/medical-bag.png" alt="Icon">
+        <div class="card-title">General Practitioners</div>
+      </div>
+      <div class="card-back">
+        <p>Our GPs build lasting relationships by taking the time to listen, understand your unique needs, and guide you through every aspect of your care. You’ll benefit from continuity of care, expert clinical judgment, and a supportive partnership that keeps your whole health picture front and center.</p>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>
