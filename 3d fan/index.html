@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>🔥 Realistic 3D Table Fan with Inward Rounded Stand Top Corners</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      background: radial-gradient(circle at center, #0f172a, #1e293b, #334155);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: sans-serif;
+      user-select: none;
+    }
+
+    .fan-wrapper {
+      perspective: 1200px;
+      margin-bottom: 50px;
+    }
+
+    .fan-body {
+      position: relative;
+      width: 350px;
+      height: 350px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #f8fafc, #475569);
+      box-shadow:
+        inset 6px 6px 15px #aab3c5,
+        inset -6px -6px 15px #ffffff,
+        0 25px 45px rgba(0,0,0,0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: visible;
+    }
+
+    .blades {
+      position: absolute;
+      width: 320px;
+      height: 320px;
+      background: url('https://static1.squarespace.com/static/685a7507d3aac93e637eee90/t/685c2d4b497ae17cd22c9cdb/1750871371291/fan.png') no-repeat center;
+      background-size: contain;
+      top: 15px;
+      left: 15px;
+      transform-origin: center;
+      z-index: 4;
+      filter: brightness(1.25) saturate(1.35) drop-shadow(0 0 12px rgba(255, 255, 255, 0.5));
+    }
+
+    .grill {
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      background:
+        repeating-radial-gradient(circle, transparent 0 4px, rgba(75,85,99,0.8) 4px 6px),
+        repeating-conic-gradient(from 0deg, rgba(75,85,99,0.85) 0deg 1deg, transparent 1deg 6deg);
+      box-shadow:
+        inset 1px 1px 3px rgba(255, 255, 255, 0.45),
+        inset -1px -1px 3px rgba(0, 0, 0, 0.6),
+        0 5px 10px rgba(0, 0, 0, 0.7);
+      z-index: 5;
+      pointer-events: none;
+    }
+
+    .stand {
+      width: 50px;
+      height: 220px;
+      margin: 22px auto 0;
+      background: linear-gradient(145deg, #1e293b, #64748b);
+      box-shadow:
+        inset 6px 6px 12px #111827,
+        inset -6px -6px 12px #94a3b8,
+        0 15px 20px rgba(0,0,0,0.6);
+      position: relative;
+      overflow: visible;
+    }
+
+    /* Inward rounded top corners using ::before and ::after */
+    .stand::before,
+    .stand::after {
+      content: "";
+      position: absolute;
+      top: -25px;
+      width: 25px;
+      height: 50px;
+      background: #0f172a; /* body bg color for inward effect */
+      border-radius: 0 0 50% 50% / 0 0 100% 100%;
+      box-shadow: 0 3px 5px rgba(0,0,0,0.4);
+      z-index: 3;
+    }
+
+    /* Left inward curve */
+    .stand::before {
+      left: 0;
+      transform-origin: top left;
+      transform: translateX(-50%) rotate(-15deg);
+    }
+
+    /* Right inward curve */
+    .stand::after {
+      right: 0;
+      transform-origin: top right;
+      transform: translateX(50%) rotate(15deg);
+    }
+
+    .base {
+      width: 180px;
+      height: 40px;
+      margin: 0 auto 0;
+      border-radius: 40px 40px 0px 0px;
+      background: linear-gradient(145deg, #1e293b, #94a3b8);
+      box-shadow:
+        inset 6px 6px 18px #0f172a,
+        inset -6px -6px 18px #cbd5e1,
+        0 8px 16px rgba(0,0,0,0.6);
+    }
+
+    .controls {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 30px;
+    }
+
+    button {
+      padding: 12px 20px;
+      border: none;
+      color: white;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+
+    #startBtn { background: #22c55e; }   /* green */
+    #stopBtn { background: #ef4444; }    /* red */
+    #slowBtn { background: #facc15; color: black; }   /* yellow */
+    #mediumBtn { background: #3b82f6; }  /* blue */
+    #fastBtn { background: #a855f7; }    /* purple */
+
+    button.active {
+      outline: 3px solid white;
+      transform: scale(1.05);
+      box-shadow: 0 0 12px 4px rgba(255,255,255,0.4);
+    }
+
+    button:hover {
+      filter: brightness(1.2);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="fan-wrapper">
+    <div class="fan-body">
+      <div class="blades" id="blades"></div>
+      <div class="grill"></div>
+    </div>
+    <div class="stand"></div>
+    <div class="base"></div>
+  </div>
+
+  <div class="controls">
+    <button id="startBtn">Start</button>
+    <button id="stopBtn">Stop</button>
+    <button id="slowBtn">Slow</button>
+    <button id="mediumBtn">Medium</button>
+    <button id="fastBtn">Fast</button>
+  </div>
+
+  <script>
+    const blades = document.getElementById('blades');
+    const startBtn = document.getElementById('startBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    const slowBtn = document.getElementById('slowBtn');
+    const mediumBtn = document.getElementById('mediumBtn');
+    const fastBtn = document.getElementById('fastBtn');
+
+    let angle = 0;
+    let interval = null;
+    let speed = 20;
+
+    function rotate() {
+      angle = (angle + speed) % 360;
+      blades.style.transform = `rotate(${angle}deg)`;
+    }
+
+    function startFan() {
+      if (!interval) {
+        interval = setInterval(rotate, 16);
+      }
+    }
+
+    function stopFan() {
+      clearInterval(interval);
+      interval = null;
+      setActiveButton(stopBtn);
+    }
+
+    function setSpeed(level) {
+      if (level === 'slow') speed = 12;
+      else if (level === 'medium') speed = 20;
+      else if (level === 'fast') speed = 30;
+
+      startFan(); // auto start when speed selected
+      setActiveButton(
+        level === 'slow' ? slowBtn :
+        level === 'medium' ? mediumBtn :
+        fastBtn
+      );
+    }
+
+    const buttons = [startBtn, stopBtn, slowBtn, mediumBtn, fastBtn];
+
+    function setActiveButton(activeBtn) {
+      buttons.forEach(btn => btn.classList.remove('active'));
+      activeBtn.classList.add('active');
+    }
+
+    // Events
+    startBtn.addEventListener('click', () => {
+      startFan();
+      setActiveButton(startBtn);
+    });
+
+    stopBtn.addEventListener('click', stopFan);
+    slowBtn.addEventListener('click', () => setSpeed('slow'));
+    mediumBtn.addEventListener('click', () => setSpeed('medium'));
+    fastBtn.addEventListener('click', () => setSpeed('fast'));
+
+    // Default: Stopped
+    stopFan();
+  </script>
+
+</body>
+</html>

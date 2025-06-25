@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>3D Carousel - Final Update</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      overflow: hidden;
+    }
+
+    .fancy-title {
+      font-size: 3.5rem;
+      font-weight: 900;
+      text-align: center;
+      letter-spacing: 2px;
+      margin-bottom: 50px;
+      background: linear-gradient(45deg, #ff004c, #8e2de2, #4a00e0);
+      background-size: 400% 400%;
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      transform: perspective(300px) rotateX(8deg);
+      text-shadow:
+        0 2px 4px rgba(0, 0, 0, 0.4),
+        0 4px 8px rgba(0, 0, 0, 0.2),
+        0 8px 16px rgba(255, 0, 204, 0.5),
+        0 0 20px rgba(255, 0, 204, 0.4);
+      animation: animatedGradient 5s ease infinite, glowTitle 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes animatedGradient {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    @keyframes glowTitle {
+      from {
+        text-shadow: 0 2px 4px rgba(255, 0, 204, 0.4), 0 0 20px rgba(255, 0, 204, 0.3);
+      }
+      to {
+        text-shadow: 0 6px 12px rgba(255, 0, 204, 0.6), 0 0 40px rgba(255, 0, 204, 0.5);
+      }
+    }
+
+    .carousel-container {
+      perspective: 1000px;
+      width: 400px;
+      height: 400px;
+      position: relative;
+    }
+
+    .carousel {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      transform-style: preserve-3d;
+      transform: rotateY(0deg);
+      cursor: grab;
+    }
+
+    .item {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 100px;
+      height: 140px;
+      background: linear-gradient(135deg, #4facfe, #00f2fe);
+      border-radius: 15px;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 24px;
+      font-weight: bold;
+      transform-origin: center center;
+      margin: -70px 0 0 -50px;
+      transform: rotateY(calc(var(--i) * 45deg)) translateZ(300px);
+      transition: transform 0.5s ease;
+      user-select: none;
+    }
+
+    .controls {
+      margin-top: 60px;
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+
+    button {
+      padding: 10px 22px;
+      font-size: 16px;
+      border: none;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      user-select: none;
+    }
+
+    button.clicked {
+      box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+    }
+
+    #prevBtn { background: #ff6b6b; }
+    #nextBtn { background: #2ecc71; }
+    #toggleBtn.playing { background: #feca57; color: #222; }
+    #toggleBtn.paused { background: #1e90ff; color: white; }
+
+    .icon { font-size: 18px; }
+  </style>
+</head>
+<body>
+
+  <h1 class="fancy-title">🎠 3D Rotating Carousel</h1>
+
+  <div class="carousel-container">
+    <div class="carousel" id="carousel">
+      <div class="item" style="--i:0">1</div>
+      <div class="item" style="--i:1">2</div>
+      <div class="item" style="--i:2">3</div>
+      <div class="item" style="--i:3">4</div>
+      <div class="item" style="--i:4">5</div>
+      <div class="item" style="--i:5">6</div>
+      <div class="item" style="--i:6">7</div>
+      <div class="item" style="--i:7">8</div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button id="prevBtn" onclick="rotate(-1)">◀ Prev</button>
+    <button id="toggleBtn" class="playing" onclick="toggleAutoRotate()">
+      <span class="icon" id="toggleIcon">⏹</span>
+      <span id="toggleText">Stop</span>
+    </button>
+    <button id="nextBtn" onclick="rotate(1)">Next ▶</button>
+  </div>
+
+  <script>
+    const carousel = document.getElementById("carousel");
+    const toggleBtn = document.getElementById("toggleBtn");
+    const toggleIcon = document.getElementById("toggleIcon");
+    const toggleText = document.getElementById("toggleText");
+    const items = document.querySelectorAll(".item");
+
+    const step = 45;
+    let angle = 0;
+    let rotateSpeed = 0.6;
+    let autoRotate = true;
+    let direction = 1;
+    let isUserRotating = false;
+    let animationId = requestAnimationFrame(animateRotation);
+
+    function animateRotation() {
+      if (autoRotate && !isUserRotating) {
+        angle += rotateSpeed * direction;
+        carousel.style.transform = `rotateY(${angle}deg)`;
+      }
+      animationId = requestAnimationFrame(animateRotation);
+    }
+
+    function stopAnimation() {
+      cancelAnimationFrame(animationId);
+    }
+
+    function startAnimation() {
+      animationId = requestAnimationFrame(animateRotation);
+    }
+
+    function rotate(dir) {
+      isUserRotating = true;
+      autoRotate = false;
+      stopAnimation();
+      direction = dir;
+      angle += step * dir;
+      carousel.style.transition = "transform 0.6s ease-in-out";
+      carousel.style.transform = `rotateY(${angle}deg)`;
+      updatePlayState();
+
+      const btn = dir === -1 ? document.getElementById("prevBtn") : document.getElementById("nextBtn");
+      btn.classList.add("clicked");
+      setTimeout(() => {
+        btn.classList.remove("clicked");
+        carousel.style.transition = "none";
+        isUserRotating = false;
+      }, 600);
+    }
+
+    function toggleAutoRotate() {
+      autoRotate = !autoRotate;
+
+      if (!autoRotate) {
+        // ✅ Stop দিলে সামনে যেটা থাকবে সেটা center-এ এসে দাঁড়াবে
+        let snappedAngle = Math.round(angle / step) * step;
+        angle = snappedAngle;
+        carousel.style.transition = "transform 0.4s ease-in-out";
+        carousel.style.transform = `rotateY(${angle}deg)`;
+        setTimeout(() => {
+          carousel.style.transition = "none";
+        }, 400);
+      } else {
+        startAnimation();
+      }
+
+      updatePlayState();
+      toggleBtn.classList.add("clicked");
+      setTimeout(() => toggleBtn.classList.remove("clicked"), 150);
+    }
+
+    function updatePlayState() {
+      if (autoRotate) {
+        toggleIcon.textContent = "⏹";
+        toggleText.textContent = "Stop";
+        toggleBtn.classList.remove("paused");
+        toggleBtn.classList.add("playing");
+      } else {
+        toggleIcon.textContent = "▶";
+        toggleText.textContent = "Play";
+        toggleBtn.classList.remove("playing");
+        toggleBtn.classList.add("paused");
+      }
+    }
+
+    // ✅ Tile Click → সেই tile center এ আনার জন্য
+    items.forEach((item, index) => {
+      item.addEventListener("click", () => {
+        autoRotate = false;
+        stopAnimation();
+        angle = -index * step;
+        carousel.style.transition = "transform 0.6s ease-in-out";
+        carousel.style.transform = `rotateY(${angle}deg)`;
+        updatePlayState();
+        setTimeout(() => carousel.style.transition = "none", 600);
+      });
+    });
+
+    // ✅ Drag Rotate
+    let startX = 0;
+    let isDragging = false;
+
+    carousel.addEventListener("mousedown", (e) => {
+      isDragging = true;
+      startX = e.clientX;
+      autoRotate = false;
+      stopAnimation();
+    });
+
+    window.addEventListener("mouseup", () => {
+      if (isDragging) {
+        isDragging = false;
+      }
+    });
+
+    window.addEventListener("mousemove", (e) => {
+      if (!isDragging) return;
+      const deltaX = e.clientX - startX;
+      angle += deltaX * 0.2;
+      startX = e.clientX;
+      carousel.style.transform = `rotateY(${angle}deg)`;
+    });
+  </script>
+
+</body>
+</html>
